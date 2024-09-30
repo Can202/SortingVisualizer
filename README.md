@@ -1,1 +1,5 @@
 # SortingVisualizer
+
+execute Sorting.py
+
+
