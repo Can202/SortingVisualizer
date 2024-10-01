@@ -9,7 +9,12 @@ import constants as C
 import random
 
 class Game:
-    def __init__(self) -> None:
+    def __init__(self, _n=10, _al = "bubble_sort", _framespersecond = 60) -> None:
+        self.al = _al
+        self.n = _n
+        self.framespersecond = _framespersecond
+
+
         self.screen = pygame.display.set_mode((C.WIDTH, C.HEIGHT), pygame.RESIZABLE)
         self.window = pygame.Surface((C.WIDTH, C.HEIGHT))
         self.clock = pygame.time.Clock()
@@ -23,19 +28,50 @@ class Game:
     
 
     def run(self):
+        
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-
-            self.bubble_sort()
-            self.update()
-            self.draw()
-
-            pygame.display.flip()
-
-            self.deltaTime = self.clock.tick(500) / 1000
+            self.run_logic()
+            
     
+    def run_logic(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+
+        if self.al == "bubble_sort":
+            self.bubble_sort()
+        elif self.al == "bogo_sort":
+            self.bogo_sort()
+        self.update()
+        self.draw()
+
+        pygame.display.flip()
+
+        self.deltaTime = self.clock.tick(self.framespersecond) / 1000
+
+    def bogo_sort(self):
+        if self.do:
+            self.iteration += 1
+            print("Attempt:", self.iteration)
+            temp = self.size_list.copy()
+        
+            for i in range(len(self.size_list)):
+                rand = random.randint(0, len(temp) - 1)
+                self.size_list[i] = temp[rand]
+                self.bars[i].size = temp[rand]
+
+                temp.remove(temp[rand])
+            bad = False
+            for i in range(len(self.size_list)-1):
+                if self.size_list[i] > self.size_list[i+1]:
+                    bad = True
+            if bad == False:
+                self.do = False
+                print("Finished")
+                for bar in self.bars:
+                    bar.color = C.GREEN
+
+
     def bubble_sort(self):
         if self.do:
             if self.remove_last_color:
@@ -94,21 +130,29 @@ class Game:
 
     def start(self):
         self.bars = []
-        quantity = 50
+        quantity = self.n
         dif = 50 / quantity
         width = C.WIDTH / quantity - dif
         for i in range(quantity):
             self.bars.append(my_objects.Bar(random.randint(1,C.HEIGHT), [i * (width + dif) ,0], width))
         
-        # Variables for loop
         self.do = True
+
+        # Variables for loop bubble sort
         self.iteration = 0
         self.current = 0
         self.remove_last_color = False
 
+        # variables for bogo_sort
+        self.size_list = []
+        for i in range(len(self.bars)):
+            self.size_list.append(self.bars[i].size)
+
+def main(_n = 20, _m = "bubble_sort", _fps = 60):
+    game = Game(_n, _m, _fps)
+    game.run()   
+    pygame.quit()
+
 
 if __name__ == "__main__":
-    game = Game()
-    game.run()    
-
-pygame.quit()
+    main()

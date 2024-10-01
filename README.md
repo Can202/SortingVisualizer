@@ -1,5 +1,4 @@
 # SortingVisualizer
 
-execute Sorting.py
 
 
